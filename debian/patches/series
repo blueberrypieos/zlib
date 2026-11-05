@@ -1,0 +1,5 @@
+0001-crc32-input-high-bits.patch
+0002-adler32-simd-neon.patch
+0003-zconf-darwin.patch
+0004-inflate-gzip-extra.patch
+0005-zutil-fdopen.patch

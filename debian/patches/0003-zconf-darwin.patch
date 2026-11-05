@@ -1,0 +1,80 @@
+Description: Keep the types of z_crc_t, z_off_t and z_off64_t
+ z_crc_t is unsigned long, so get_crc_table() keeps its 8-byte elements.
+ z_off_t stays long, as in the functions that take or return it.
+ z_off64_t is off_t on Darwin, as in the SDK's zconf.h.
+ zutil.h then leaves out its declarations of adler32_combine64() and
+ crc32_combine64() with z_off_t, so that their definitions compile.
+ Z_HAVE_UNISTD_H and Z_HAVE_STDARG_H are set as configure sets them.
+ The build does not run configure.
+Author: The Blueberry Pie OS Authors
+Forwarded: not-needed
+Last-Update: 2026-11-05
+
+--- a/zconf.h
++++ b/zconf.h
+@@ -2,6 +2,7 @@
+  * Copyright (C) 1995-2016 Jean-loup Gailly, Mark Adler
+  * For conditions of distribution and use, see copyright notice in zlib.h
+  */
++/* Modified 2026-11-05: z_crc_t is unsigned long, z_off_t is long and z_off64_t is off_t; Z_HAVE_UNISTD_H and Z_HAVE_STDARG_H are set as configure sets them (zlib licence, condition 2). */
+ 
+ /* @(#) $Id$ */
+ 
+@@ -425,17 +426,13 @@ typedef uLong FAR uLongf;
+ #  endif
+ #endif
+ 
+-#ifdef Z_U4
+-   typedef Z_U4 z_crc_t;
+-#else
+-   typedef unsigned long z_crc_t;
+-#endif
++typedef unsigned long z_crc_t;
+ 
+-#ifdef HAVE_UNISTD_H    /* may be set to #if 1 by ./configure */
++#if 1
+ #  define Z_HAVE_UNISTD_H
+ #endif
+ 
+-#ifdef HAVE_STDARG_H    /* may be set to #if 1 by ./configure */
++#if 1
+ #  define Z_HAVE_STDARG_H
+ #endif
+ 
+@@ -477,7 +474,7 @@ typedef uLong FAR uLongf;
+ #      include <unixio.h>       /* for off_t */
+ #    endif
+ #    ifndef z_off_t
+-#      define z_off_t off_t
++#      define z_off_t long
+ #    endif
+ #  endif
+ #endif
+@@ -506,6 +503,8 @@ typedef uLong FAR uLongf;
+ 
+ #if !defined(_WIN32) && defined(Z_LARGE64)
+ #  define z_off64_t off64_t
++#elif defined(__APPLE__)
++#  define z_off64_t off_t
+ #else
+ #  if defined(_WIN32) && !defined(__GNUC__) && !defined(Z_SOLO)
+ #    define z_off64_t __int64
+--- a/zutil.h
++++ b/zutil.h
+@@ -2,6 +2,7 @@
+  * Copyright (C) 1995-2022 Jean-loup Gailly, Mark Adler
+  * For conditions of distribution and use, see copyright notice in zlib.h
+  */
++/* Modified 2026-11-05: adler32_combine64() and crc32_combine64() are not declared with z_off_t on Darwin, where z_off64_t is off_t (zlib licence, condition 2). */
+ 
+ /* WARNING: this file should *not* be used by applications. It is
+    part of the implementation of the compression library and is
+@@ -190,7 +191,7 @@ extern z_const char * const z_errmsg[10]
+ 
+ /* provide prototypes for these when building zlib without LFS */
+ #if !defined(_WIN32) && \
+-    (!defined(_LARGEFILE64_SOURCE) || _LFS64_LARGEFILE-0 == 0)
++    (!defined(_LARGEFILE64_SOURCE) || _LFS64_LARGEFILE-0 == 0) && !defined(__APPLE__)
+     ZEXTERN uLong ZEXPORT adler32_combine64 OF((uLong, uLong, z_off_t));
+     ZEXTERN uLong ZEXPORT crc32_combine64 OF((uLong, uLong, z_off_t));
+ #endif

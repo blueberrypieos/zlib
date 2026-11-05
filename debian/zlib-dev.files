@@ -1,0 +1,4 @@
+usr/include/zconf.h
+usr/include/zlib.h
+usr/lib/pkgconfig/zlib.pc
+usr/share/man/man3/zlib.3

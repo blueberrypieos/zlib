@@ -1,0 +1,56 @@
+Description: Remove the fdopen() defines from zutil.h
+ The SDK defines TARGET_OS_MAC, so zutil.h defined fdopen() as NULL,
+ and the declaration of fdopen() in stdio.h failed to compile in zutil.c.
+ zlib does not use fdopen(). OS_CODE stays 19.
+Origin: upstream, https://github.com/madler/zlib/commit/4bd9a71f3539b5ce47f0c67ab5e01f3196dc8ef9
+Author: Mark Adler
+Last-Update: 2026-11-05
+
+--- a/zutil.h
++++ b/zutil.h
+@@ -3,6 +3,7 @@
+  * For conditions of distribution and use, see copyright notice in zlib.h
+  */
+ /* Modified 2026-11-05: adler32_combine64() and crc32_combine64() are not declared with z_off_t on Darwin, where z_off64_t is off_t (zlib licence, condition 2). */
++/* Modified 2026-11-05: TARGET_OS_MAC no longer sets OS_CODE 7, and the fdopen() defines are gone (zlib licence, condition 2). */
+ 
+ /* WARNING: this file should *not* be used by applications. It is
+    part of the implementation of the compression library and is
+@@ -138,17 +139,8 @@ extern z_const char * const z_errmsg[10]
+ #  endif
+ #endif
+ 
+-#if defined(MACOS) || defined(TARGET_OS_MAC)
++#if defined(MACOS)
+ #  define OS_CODE  7
+-#  ifndef Z_SOLO
+-#    if defined(__MWERKS__) && __dest_os != __be_os && __dest_os != __win32_os
+-#      include <unix.h> /* for fdopen */
+-#    else
+-#      ifndef fdopen
+-#        define fdopen(fd,mode) NULL /* No fdopen() */
+-#      endif
+-#    endif
+-#  endif
+ #endif
+ 
+ #ifdef __acorn
+@@ -171,18 +163,6 @@ extern z_const char * const z_errmsg[10]
+ #  define OS_CODE 19
+ #endif
+ 
+-#if defined(_BEOS_) || defined(RISCOS)
+-#  define fdopen(fd,mode) NULL /* No fdopen() */
+-#endif
+-
+-#if (defined(_MSC_VER) && (_MSC_VER > 600)) && !defined __INTERIX
+-#  if defined(_WIN32_WCE)
+-#    define fdopen(fd,mode) NULL /* No fdopen() */
+-#  else
+-#    define fdopen(fd,type)  _fdopen(fd,type)
+-#  endif
+-#endif
+-
+ #if defined(__BORLANDC__) && !defined(MSDOS)
+   #pragma warn -8004
+   #pragma warn -8008

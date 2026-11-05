@@ -1,0 +1,51 @@
+Description: Use only the low 32 bits of the CRC inputs
+ crc32_z(), crc32_combine64() and crc32_combine_op() ignore the bits
+ above the low 32 of the CRCs they are given, as before zlib 1.2.12.
+Origin: upstream, https://github.com/madler/zlib/commit/ec3df00224d4b396e2ac6586ab5d25f673caa4c2
+Author: Mark Adler
+Last-Update: 2026-11-05
+
+--- a/crc32.c
++++ b/crc32.c
+@@ -6,6 +6,7 @@
+  * arithmetic-logic units, commonly found in modern CPU cores. It is due to
+  * Kadatch and Jenkins (2010). See doc/crc-doc.1.0.pdf in this distribution.
+  */
++/* Modified 2026-11-05: crc32_z(), crc32_combine64() and crc32_combine_op() use only the low 32 bits of their CRC inputs (zlib licence, condition 2). */
+ 
+ /* @(#) $Id$ */
+ 
+@@ -630,7 +631,7 @@ unsigned long ZEXPORT crc32_z(crc, buf,
+ #endif /* DYNAMIC_CRC_TABLE */
+ 
+     /* Pre-condition the CRC */
+-    crc ^= 0xffffffff;
++    crc = (~crc) & 0xffffffff;
+ 
+     /* Compute the CRC up to a word boundary. */
+     while (len && ((z_size_t)buf & 7) != 0) {
+@@ -749,7 +750,7 @@ unsigned long ZEXPORT crc32_z(crc, buf,
+ #endif /* DYNAMIC_CRC_TABLE */
+ 
+     /* Pre-condition the CRC */
+-    crc ^= 0xffffffff;
++    crc = (~crc) & 0xffffffff;
+ 
+ #ifdef W
+ 
+@@ -1077,7 +1078,7 @@ uLong ZEXPORT crc32_combine64(crc1, crc2
+ #ifdef DYNAMIC_CRC_TABLE
+     once(&made, make_crc_table);
+ #endif /* DYNAMIC_CRC_TABLE */
+-    return multmodp(x2nmodp(len2, 3), crc1) ^ crc2;
++    return multmodp(x2nmodp(len2, 3), crc1) ^ (crc2 & 0xffffffff);
+ }
+ 
+ /* ========================================================================= */
+@@ -1112,5 +1113,5 @@ uLong crc32_combine_op(crc1, crc2, op)
+     uLong crc2;
+     uLong op;
+ {
+-    return multmodp(op, crc1) ^ crc2;
++    return multmodp(op, crc1) ^ (crc2 & 0xffffffff);
+ }

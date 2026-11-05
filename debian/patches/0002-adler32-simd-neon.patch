@@ -1,0 +1,41 @@
+Description: Use the NEON adler32 from Chromium
+ adler32_z() calls adler32_simd_() for 64 bytes or more.
+ adler32_simd_() is in debian/adler32_simd.c.
+ The call is the one in Chromium's adler32.c.
+Origin: other, https://chromium.googlesource.com/chromium/src/third_party/zlib/+/9f9f52c60a14e8e772fb561029ae0a121fef7609/adler32.c
+Forwarded: not-needed
+Last-Update: 2026-11-05
+
+--- a/adler32.c
++++ b/adler32.c
+@@ -2,6 +2,7 @@
+  * Copyright (C) 1995-2011, 2016 Mark Adler
+  * For conditions of distribution and use, see copyright notice in zlib.h
+  */
++/* Modified 2026-11-05: adler32_z() uses the NEON adler32_simd_() from Chromium for 64 bytes or more (zlib licence, condition 2). */
+ 
+ /* @(#) $Id$ */
+ 
+@@ -59,6 +60,10 @@ local uLong adler32_combine_ OF((uLong a
+ #  define MOD63(a) a %= BASE
+ #endif
+ 
++#if defined(ADLER32_SIMD_NEON)
++#include "adler32_simd.h"
++#endif
++
+ /* ========================================================================= */
+ uLong ZEXPORT adler32_z(adler, buf, len)
+     uLong adler;
+@@ -68,6 +73,11 @@ uLong ZEXPORT adler32_z(adler, buf, len)
+     unsigned long sum2;
+     unsigned n;
+ 
++#if defined(ADLER32_SIMD_NEON)
++    if (buf != Z_NULL && len >= 64)
++        return adler32_simd_(adler, buf, len);
++#endif
++
+     /* split Adler-32 into component sums */
+     sum2 = (adler >> 16) & 0xffff;
+     adler &= 0xffff;

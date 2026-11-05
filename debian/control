@@ -1,0 +1,27 @@
+Source: zlib
+Section: libs
+Priority: optional
+Maintainer: Maxwell <maxwell@blueberrypieos.com>
+Build-Depends: pietoolchain (>= 0.1.0)
+Standards-Version: 4.7.3
+Homepage: https://zlib.net/
+Vcs-Git: https://github.com/blueberrypieos/zlib.git -b blueberry-pie-os/latest
+Vcs-Browser: https://github.com/blueberrypieos/zlib
+Rules-Requires-Root: no
+
+Package: zlib
+Architecture: darwin-arm64
+Essential: yes
+Priority: required
+Depends: libsystem
+Description: zlib compression library
+ The zlib compression library.
+
+Package: zlib-dev
+Section: libdevel
+Priority: optional
+Architecture: darwin-arm64
+Depends: zlib (= ${binary:Version})
+Description: zlib compression library: development files
+ Headers and pkg-config metadata for building
+ programs against zlib.

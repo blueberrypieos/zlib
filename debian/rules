@@ -1,0 +1,34 @@
+#!/usr/bin/make -f
+# SPDX-License-Identifier: BSD-2-Clause
+# Copyright (c) 2026 The Blueberry Pie OS Authors
+
+include /usr/share/pietoolchain/rules.mk
+
+SOURCES := adler32.c compress.c crc32.c deflate.c infback.c inflate.c inftrees.c \
+	trees.c uncompr.c zutil.c inffast.c gzclose.c gzlib.c gzread.c gzwrite.c debian/adler32_simd.c
+OBJS    := $(patsubst %,$(OBJ)/%.o,$(basename $(SOURCES)))
+DYLIB   := $(OBJ)/libz.1.dylib
+
+FLAGS := $(BASE_CFLAGS) -std=gnu11 -I$(SRCROOT)
+
+$(OBJ)/%.o: $(SRCROOT)/%.c
+	@mkdir -p $(dir $@)
+	$(CC) $(FLAGS) -c $< -o $@
+$(OBJ)/crc32.o: FLAGS += -mcpu=generic+crc
+$(OBJ)/adler32.o $(OBJ)/debian/adler32_simd.o: FLAGS += -DADLER32_SIMD_NEON -I$(SRCROOT)/debian
+
+$(DYLIB): $(OBJS)
+	$(CC) $(BASE_LDFLAGS) -dynamiclib -install_name /usr/lib/libz.1.dylib \
+		-compatibility_version 1 -current_version 1.2.12 \
+		-Wl,-exported_symbols_list,$(SRCROOT)/debian/libz.exp \
+		$(OBJS) -o $@
+
+install: $(DYLIB)
+	install -d $(ROOT)/usr/lib/pkgconfig $(ROOT)/usr/include $(ROOT)/usr/share/man/man3
+	install -m 755 $(DYLIB) $(ROOT)/usr/lib/
+	ln -sf libz.1.dylib $(ROOT)/usr/lib/libz.dylib
+	install -m 644 $(SRCROOT)/zlib.h $(SRCROOT)/zconf.h $(ROOT)/usr/include/
+	install -m 644 $(SRCROOT)/debian/zlib.pc $(ROOT)/usr/lib/pkgconfig/
+	install -m 644 $(SRCROOT)/zlib.3 $(ROOT)/usr/share/man/man3/
+
+.PHONY: install

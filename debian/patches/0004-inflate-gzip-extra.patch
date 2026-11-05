@@ -1,0 +1,30 @@
+Description: Check the gzip header extra field length in inflate()
+ This is the fix for CVE-2022-37434 from zlib 1.2.13:
+ commit eff308af425b67093bab25f80f1ae950166bece1 and its correction,
+ commit 1eb7682f845ac9e9bf9ae35bbfb3bad5dacbd91d.
+Origin: upstream, https://github.com/madler/zlib/commit/1eb7682f845ac9e9bf9ae35bbfb3bad5dacbd91d
+Author: Mark Adler
+Last-Update: 2026-11-05
+
+--- a/inflate.c
++++ b/inflate.c
+@@ -2,6 +2,7 @@
+  * Copyright (C) 1995-2022 Mark Adler
+  * For conditions of distribution and use, see copyright notice in zlib.h
+  */
++/* Modified 2026-11-05: inflate() copies a gzip header extra field only while it fits in extra_max (zlib licence, condition 2). */
+ 
+ /*
+  * Change history:
+@@ -764,8 +765,9 @@ int flush;
+                 if (copy > have) copy = have;
+                 if (copy) {
+                     if (state->head != Z_NULL &&
+-                        state->head->extra != Z_NULL) {
+-                        len = state->head->extra_len - state->length;
++                        state->head->extra != Z_NULL &&
++                        (len = state->head->extra_len - state->length) <
++                            state->head->extra_max) {
+                         zmemcpy(state->head->extra + len, next,
+                                 len + copy > state->head->extra_max ?
+                                 state->head->extra_max - len : copy);

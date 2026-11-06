@@ -1,0 +1,225 @@
+Description: Add availability annotations to zlib.h
+Forwarded: not-needed
+Last-Update: 2026-11-06
+
+--- a/zlib.h
++++ b/zlib.h
+@@ -27,12 +27,19 @@
+   Comments) 1950 to 1952 in the files http://tools.ietf.org/html/rfc1950
+   (zlib format), rfc1951 (deflate format) and rfc1952 (gzip format).
+ */
++/* Modified 2026-11-06: added __API_AVAILABLE() annotations (zlib licence, condition 2). */
+ 
+ #ifndef ZLIB_H
+ #define ZLIB_H
+ 
+ #include "zconf.h"
+ 
++#ifdef __APPLE__
++#include <Availability.h>
++#else
++#define __API_AVAILABLE(...)
++#endif
++
+ #ifdef __cplusplus
+ extern "C" {
+ #endif
+@@ -653,7 +660,8 @@ ZEXTERN int ZEXPORT deflateSetDictionary
+ 
+ ZEXTERN int ZEXPORT deflateGetDictionary OF((z_streamp strm,
+                                              Bytef *dictionary,
+-                                             uInt  *dictLength));
++                                             uInt  *dictLength))
++                                             __API_AVAILABLE(macos(10.13),ios(11.0));
+ /*
+      Returns the sliding dictionary being maintained by deflate.  dictLength is
+    set to the number of bytes in the dictionary, and that many bytes are copied
+@@ -774,7 +782,8 @@ ZEXTERN uLong ZEXPORT deflateBound OF((z
+ 
+ ZEXTERN int ZEXPORT deflatePending OF((z_streamp strm,
+                                        unsigned *pending,
+-                                       int *bits));
++                                       int *bits))
++                                       __API_AVAILABLE(macos(10.10),ios(8.0));
+ /*
+      deflatePending() returns the number of bytes and bits of output that have
+    been generated, but not yet provided in the available output.  The bytes not
+@@ -908,7 +917,8 @@ ZEXTERN int ZEXPORT inflateSetDictionary
+ 
+ ZEXTERN int ZEXPORT inflateGetDictionary OF((z_streamp strm,
+                                              Bytef *dictionary,
+-                                             uInt  *dictLength));
++                                             uInt  *dictLength))
++                                             __API_AVAILABLE(macos(10.10),ios(8.0));
+ /*
+      Returns the sliding dictionary being maintained by inflate.  dictLength is
+    set to the number of bytes in the dictionary, and that many bytes are copied
+@@ -967,7 +977,8 @@ ZEXTERN int ZEXPORT inflateReset OF((z_s
+ */
+ 
+ ZEXTERN int ZEXPORT inflateReset2 OF((z_streamp strm,
+-                                      int windowBits));
++                                      int windowBits))
++                                      __API_AVAILABLE(macos(10.7),ios(5.0));
+ /*
+      This function is the same as inflateReset, but it also permits changing
+    the wrap and window size requests.  The windowBits parameter is interpreted
+@@ -1001,7 +1012,8 @@ ZEXTERN int ZEXPORT inflatePrime OF((z_s
+    stream state was inconsistent.
+ */
+ 
+-ZEXTERN long ZEXPORT inflateMark OF((z_streamp strm));
++ZEXTERN long ZEXPORT inflateMark OF((z_streamp strm))
++                                     __API_AVAILABLE(macos(10.7),ios(5.0));
+ /*
+      This function returns two values, one in the lower 16 bits of the return
+    value, and the other in the remaining upper bits, obtained by shifting the
+@@ -1283,7 +1295,8 @@ ZEXTERN int ZEXPORT uncompress OF((Bytef
+ */
+ 
+ ZEXTERN int ZEXPORT uncompress2 OF((Bytef *dest,   uLongf *destLen,
+-                                    const Bytef *source, uLong *sourceLen));
++                                    const Bytef *source, uLong *sourceLen))
++                                    __API_AVAILABLE(macos(10.13),ios(11.0));
+ /*
+      Same as uncompress, except that sourceLen is a pointer, where the
+    length of the source is *sourceLen.  On return, *sourceLen is the number of
+@@ -1362,7 +1375,8 @@ ZEXTERN gzFile ZEXPORT gzdopen OF((int f
+    will not detect if fd is invalid (unless fd is -1).
+ */
+ 
+-ZEXTERN int ZEXPORT gzbuffer OF((gzFile file, unsigned size));
++ZEXTERN int ZEXPORT gzbuffer OF((gzFile file, unsigned size))
++                                 __API_AVAILABLE(macos(10.7),ios(5.0));
+ /*
+      Set the internal buffer size used by this library's functions for file to
+    size.  The default buffer size is 8192 bytes.  This function must be called
+@@ -1420,7 +1434,8 @@ ZEXTERN int ZEXPORT gzread OF((gzFile fi
+ */
+ 
+ ZEXTERN z_size_t ZEXPORT gzfread OF((voidp buf, z_size_t size, z_size_t nitems,
+-                                     gzFile file));
++                                     gzFile file))
++                                     __API_AVAILABLE(macos(10.13),ios(11.0));
+ /*
+      Read and decompress up to nitems items of size size from file into buf,
+    otherwise operating as gzread() does.  This duplicates the interface of
+@@ -1452,7 +1467,8 @@ ZEXTERN int ZEXPORT gzwrite OF((gzFile f
+ */
+ 
+ ZEXTERN z_size_t ZEXPORT gzfwrite OF((voidpc buf, z_size_t size,
+-                                      z_size_t nitems, gzFile file));
++                                      z_size_t nitems, gzFile file))
++                                      __API_AVAILABLE(macos(10.13),ios(11.0));
+ /*
+      Compress and write nitems items of size size from buf to file, duplicating
+    the interface of stdio's fwrite(), with size_t request and return types.  If
+@@ -1641,8 +1657,10 @@ ZEXTERN int ZEXPORT    gzclose OF((gzFil
+    last read ended in the middle of a gzip stream, or Z_OK on success.
+ */
+ 
+-ZEXTERN int ZEXPORT gzclose_r OF((gzFile file));
+-ZEXTERN int ZEXPORT gzclose_w OF((gzFile file));
++ZEXTERN int ZEXPORT gzclose_r OF((gzFile file))
++                                  __API_AVAILABLE(macos(10.7),ios(5.0));
++ZEXTERN int ZEXPORT gzclose_w OF((gzFile file))
++                                  __API_AVAILABLE(macos(10.7),ios(5.0));
+ /*
+      Same as gzclose(), but gzclose_r() is only for use when reading, and
+    gzclose_w() is only for use when writing or appending.  The advantage to
+@@ -1707,7 +1725,8 @@ ZEXTERN uLong ZEXPORT adler32 OF((uLong
+ */
+ 
+ ZEXTERN uLong ZEXPORT adler32_z OF((uLong adler, const Bytef *buf,
+-                                    z_size_t len));
++                                    z_size_t len))
++                                    __API_AVAILABLE(macos(10.13),ios(11.0));
+ /*
+      Same as adler32(), but with a size_t length.
+ */
+@@ -1743,7 +1762,8 @@ ZEXTERN uLong ZEXPORT crc32 OF((uLong cr
+ */
+ 
+ ZEXTERN uLong ZEXPORT crc32_z OF((uLong crc, const Bytef *buf,
+-                                  z_size_t len));
++                                  z_size_t len))
++                                  __API_AVAILABLE(macos(10.13),ios(11.0));
+ /*
+      Same as crc32(), but with a size_t length.
+ */
+@@ -1765,7 +1785,8 @@ ZEXTERN uLong ZEXPORT crc32_combine_gen
+    crc32_combine_op().
+ */
+ 
+-ZEXTERN uLong ZEXPORT crc32_combine_op OF((uLong crc1, uLong crc2, uLong op));
++ZEXTERN uLong ZEXPORT crc32_combine_op OF((uLong crc1, uLong crc2, uLong op))
++                                          __API_AVAILABLE(macos(14.0),ios(17.0));
+ /*
+      Give the same result as crc32_combine(), using op in place of len2. op is
+    is generated from len2 by crc32_combine_gen(). This will be faster than
+@@ -1836,7 +1857,8 @@ struct gzFile_s {
+     unsigned char *next;
+     z_off64_t pos;
+ };
+-ZEXTERN int ZEXPORT gzgetc_ OF((gzFile file));  /* backward compatibility */
++ZEXTERN int ZEXPORT gzgetc_ OF((gzFile file))
++                                __API_AVAILABLE(macos(10.10),ios(8.0));  /* backward compatibility */
+ #ifdef Z_PREFIX_SET
+ #  undef z_gzgetc
+ #  define z_gzgetc(g) \
+@@ -1893,10 +1915,12 @@ ZEXTERN int ZEXPORT gzgetc_ OF((gzFile f
+    ZEXTERN gzFile ZEXPORT gzopen OF((const char *, const char *));
+    ZEXTERN z_off_t ZEXPORT gzseek OF((gzFile, z_off_t, int));
+    ZEXTERN z_off_t ZEXPORT gztell OF((gzFile));
+-   ZEXTERN z_off_t ZEXPORT gzoffset OF((gzFile));
++   ZEXTERN z_off_t ZEXPORT gzoffset OF((gzFile))
++                                        __API_AVAILABLE(macos(10.7),ios(5.0));
+    ZEXTERN uLong ZEXPORT adler32_combine OF((uLong, uLong, z_off_t));
+    ZEXTERN uLong ZEXPORT crc32_combine OF((uLong, uLong, z_off_t));
+-   ZEXTERN uLong ZEXPORT crc32_combine_gen OF((z_off_t));
++   ZEXTERN uLong ZEXPORT crc32_combine_gen OF((z_off_t))
++                                              __API_AVAILABLE(macos(14.0),ios(17.0));
+ #endif
+ 
+ #else /* Z_SOLO */
+@@ -1911,11 +1935,16 @@ ZEXTERN int ZEXPORT gzgetc_ OF((gzFile f
+ ZEXTERN const char   * ZEXPORT zError           OF((int));
+ ZEXTERN int            ZEXPORT inflateSyncPoint OF((z_streamp));
+ ZEXTERN const z_crc_t FAR * ZEXPORT get_crc_table    OF((void));
+-ZEXTERN int            ZEXPORT inflateUndermine OF((z_streamp, int));
+-ZEXTERN int            ZEXPORT inflateValidate OF((z_streamp, int));
+-ZEXTERN unsigned long  ZEXPORT inflateCodesUsed OF ((z_streamp));
+-ZEXTERN int            ZEXPORT inflateResetKeep OF((z_streamp));
+-ZEXTERN int            ZEXPORT deflateResetKeep OF((z_streamp));
++ZEXTERN int            ZEXPORT inflateUndermine OF((z_streamp, int))
++                                                    __API_AVAILABLE(macos(10.7),ios(5.0));
++ZEXTERN int            ZEXPORT inflateValidate OF((z_streamp, int))
++                                                    __API_AVAILABLE(macos(10.13),ios(11.0));
++ZEXTERN unsigned long  ZEXPORT inflateCodesUsed OF ((z_streamp))
++                                                    __API_AVAILABLE(macos(10.13),ios(11.0));
++ZEXTERN int            ZEXPORT inflateResetKeep OF((z_streamp))
++                                                    __API_AVAILABLE(macos(10.10),ios(8.0));
++ZEXTERN int            ZEXPORT deflateResetKeep OF((z_streamp))
++                                                    __API_AVAILABLE(macos(10.10),ios(8.0));
+ #if defined(_WIN32) && !defined(Z_SOLO)
+ ZEXTERN gzFile         ZEXPORT gzopen_w OF((const wchar_t *path,
+                                             const char *mode));
+@@ -1924,7 +1953,8 @@ ZEXTERN gzFile         ZEXPORT gzopen_w
+ #  ifndef Z_SOLO
+ ZEXTERN int            ZEXPORTVA gzvprintf Z_ARG((gzFile file,
+                                                   const char *format,
+-                                                  va_list va));
++                                                  va_list va))
++                                                  __API_AVAILABLE(macos(10.10),ios(8.0));
+ #  endif
+ #endif
+ 
+@@ -1932,4 +1962,8 @@ ZEXTERN int            ZEXPORTVA gzvprin
+ }
+ #endif
+ 
++#ifndef __APPLE__
++#undef __API_AVAILABLE
++#endif
++
+ #endif /* ZLIB_H */

@@ -1,3 +1,9 @@
+zlib (1.2.12+ds1-2) blueberry-pie-os; urgency=medium
+
+  * Added availability annotations to zlib.h
+
+ -- Maxwell <maxwell@blueberrypieos.com>  Fri, 06 Nov 2026 08:36:04 +0000
+
 zlib (1.2.12+ds1-1) blueberry-pie-os; urgency=medium
 
   * zlib 1.2.12

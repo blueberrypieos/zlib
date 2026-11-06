@@ -3,3 +3,4 @@
 0003-zconf-darwin.patch
 0004-inflate-gzip-extra.patch
 0005-zutil-fdopen.patch
+0006-api-available.patch

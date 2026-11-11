@@ -1,3 +1,9 @@
+zlib (1.2.12+ds1-3) blueberry-pie-os; urgency=medium
+
+  * The debian/patches paragraphs name the patched files' holders.
+
+ -- Maxwell <maxwell@blueberrypieos.com>  Wed, 11 Nov 2026 23:04:38 +0000
+
 zlib (1.2.12+ds1-2) blueberry-pie-os; urgency=medium
 
   * Added availability annotations to zlib.h

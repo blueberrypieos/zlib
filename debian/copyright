@@ -47,21 +47,12 @@ Copyright: 2026 The Blueberry Pie OS Authors
 License: BSD-2-Clause
 
 Files: debian/patches/0001-crc32-input-high-bits.patch
+ debian/patches/0002-adler32-simd-neon.patch
+ debian/patches/0003-zconf-darwin.patch
  debian/patches/0004-inflate-gzip-extra.patch
-Copyright: 1995-2022 Mark Adler
- 2026 The Blueberry Pie OS Authors
-License: Zlib
-
-Files: debian/patches/0002-adler32-simd-neon.patch
-Copyright: 1995-2011, 2016 Mark Adler
- 2026 The Blueberry Pie OS Authors
-License: Zlib
-
-Files: debian/patches/0003-zconf-darwin.patch
  debian/patches/0005-zutil-fdopen.patch
  debian/patches/0006-api-available.patch
-Copyright: 1995-2022 Jean-loup Gailly
- 1995-2022 Mark Adler
+Copyright: 1995-2022 Jean-loup Gailly and Mark Adler
  2026 The Blueberry Pie OS Authors
 License: Zlib
 

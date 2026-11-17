@@ -3,7 +3,10 @@ _adler32_combine
 _adler32_z
 _compress
 _compress2
+_compress2_z
 _compressBound
+_compressBound_z
+_compress_z
 _crc32
 _crc32_combine
 _crc32_combine_gen
@@ -11,6 +14,7 @@ _crc32_combine_op
 _crc32_z
 _deflate
 _deflateBound
+_deflateBound_z
 _deflateCopy
 _deflateEnd
 _deflateGetDictionary
@@ -24,6 +28,7 @@ _deflateResetKeep
 _deflateSetDictionary
 _deflateSetHeader
 _deflateTune
+_deflateUsed
 _get_crc_table
 _gzbuffer
 _gzclearerr
@@ -76,6 +81,8 @@ _inflateUndermine
 _inflateValidate
 _uncompress
 _uncompress2
+_uncompress2_z
+_uncompress_z
 _zError
 _zlibCompileFlags
 _zlibVersion

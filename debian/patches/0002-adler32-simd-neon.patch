@@ -4,7 +4,7 @@ Description: Use the NEON adler32 from Chromium
  The call is the one in Chromium's adler32.c.
 Origin: other, https://chromium.googlesource.com/chromium/src/third_party/zlib/+/9f9f52c60a14e8e772fb561029ae0a121fef7609/adler32.c
 Forwarded: not-needed
-Last-Update: 2026-11-05
+Last-Update: 2026-11-17
 
 --- a/adler32.c
 +++ b/adler32.c
@@ -16,7 +16,7 @@ Last-Update: 2026-11-05
  
  /* @(#) $Id$ */
  
-@@ -59,6 +60,10 @@ local uLong adler32_combine_ OF((uLong a
+@@ -57,11 +58,20 @@
  #  define MOD63(a) a %= BASE
  #endif
  
@@ -25,9 +25,7 @@ Last-Update: 2026-11-05
 +#endif
 +
  /* ========================================================================= */
- uLong ZEXPORT adler32_z(adler, buf, len)
-     uLong adler;
-@@ -68,6 +73,11 @@ uLong ZEXPORT adler32_z(adler, buf, len)
+ uLong ZEXPORT adler32_z(uLong adler, const Bytef *buf, z_size_t len) {
      unsigned long sum2;
      unsigned n;
  

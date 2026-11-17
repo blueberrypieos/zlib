@@ -19,7 +19,7 @@ $(OBJ)/adler32.o $(OBJ)/debian/adler32_simd.o: FLAGS += -DADLER32_SIMD_NEON -I$(
 
 $(DYLIB): $(OBJS)
 	$(CC) $(BASE_LDFLAGS) -dynamiclib -install_name /usr/lib/libz.1.dylib \
-		-compatibility_version 1 -current_version 1.2.12 \
+		-compatibility_version 1 -current_version 1.4 \
 		-Wl,-exported_symbols_list,$(SRCROOT)/debian/libz.exp \
 		$(OBJS) -o $@
 

@@ -1,3 +1,29 @@
+zlib (1.4+ds1-1) blueberry-pie-os; urgency=medium
+
+  * zlib 1.4.
+  * inflateGetDictionary() no longer writes more than 32 KiB on a stream
+    that is reset after inflate() rejected its zlib header.
+  * inflateBack() rejects distances that reach back too far. It no longer
+    copies unwritten memory to the output.
+  * Repeated deflatePrime() calls no longer write past the pending buffer.
+  * inflate() no longer reads before its input after repeated
+    inflatePrime() calls.
+  * gzungetc() right after gzopen() no longer writes through an unset
+    pointer.
+  * gzsetparams() fails on a file opened with "T". It used unset deflate
+    state.
+  * deflateReset() drops the gzip header that deflateSetHeader() set.
+  * inflateSync() finds a sync marker held in the bit buffer.
+  * inflateSync() on a stream with windowBits 0 and no header yet sets a
+    32 KiB window. A later zlib header no longer overruns a 1-byte window.
+  * gzgets() with len 1 returns an empty string.
+  * crc32_combine() and crc32_combine_op() use only the low 32 bits of the
+    first CRC.
+  * New functions: compress_z(), compress2_z(), compressBound_z(),
+    deflateBound_z(), deflateUsed(), uncompress_z() and uncompress2_z().
+
+ -- Maxwell <maxwell@blueberrypieos.com>  Tue, 17 Nov 2026 20:11:21 +0000
+
 zlib (1.2.12+ds1-3) blueberry-pie-os; urgency=medium
 
   * Build-Depend on pietoolchain-host and pietoolchain-sdk.
